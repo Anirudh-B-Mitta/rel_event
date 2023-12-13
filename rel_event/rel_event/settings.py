@@ -138,5 +138,13 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587  # Use 465 if you're using SSL
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False  # Set to True if you're using SSL
-EMAIL_HOST_USER = '<Email here>'
-EMAIL_HOST_PASSWORD = '<password here>'
+EMAIL_HOST_USER = 'fakaccoun428@gmail.com'
+EMAIL_HOST_PASSWORD = 'rxwf hipu cxnd tqpi'
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+PASSWORD_RESET_TIMEOUT = 259200  # 3 days in seconds
+PASSWORD_RESET_EMAIL_SUBJECT = 'Password Reset'
+PASSWORD_RESET_EMAIL_TEMPLATE_NAME = 'registration/password_reset_email.html'
+PASSWORD_RESET_FROM_EMAIL = 'fakaccoun428'
+

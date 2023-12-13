@@ -5,6 +5,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUser
 from .serializers import UserSerializer
+from django.shortcuts import render
+
 
 class SignUpView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -45,3 +47,7 @@ class LoginView(APIView):
         access_token = str(refresh.access_token)
 
         return Response({'access_token': access_token})
+    
+
+def custom_password_reset_done_view(request):
+    return render(request, 'registration/password_reset_done.html')

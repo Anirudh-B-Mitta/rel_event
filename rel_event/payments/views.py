@@ -10,3 +10,10 @@ class YourPaymentListView(generics.ListCreateAPIView):
 class YourPaymentDetailView(generics.RetrieveAPIView):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+
+class YourTicketView(generics.ListAPIView):
+    serializer_class = PaymentSerializer
+
+    def get_queryset(self):
+        ticket_id = self.kwargs['ticket_id']
+        return Payment.objects.filter(ticket=ticket_id)
