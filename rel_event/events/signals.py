@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from events.models import Event
 from broadcast.models import Broadcast
 
+# automatic broadcast channel if event is created
 @receiver(post_save, sender=Event)
 def create_broadcast(sender, instance, created, **kwargs):
     if created:
