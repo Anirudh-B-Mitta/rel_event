@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "volunteers",
     "payments",
     "rest_framework",
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +56,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = "rel_event.urls"
@@ -143,3 +146,11 @@ EMAIL_HOST_PASSWORD = 'rxwf hipu cxnd tqpi'
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
 FRONTEND_URL = '127.0.0.1:8000'
+
+
+# CORS_ALLOWED_ORIGINS = [
+#     # Add your frontend domain(s) here, e.g., 'http://localhost:3000'
+# ]
+CORS_ALLOW_ALL_ORIGINS = True  #for development purpose only
+
+CORS_ALLOW_CREDENTIALS = True
