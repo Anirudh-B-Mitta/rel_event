@@ -130,12 +130,11 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# settings.py
 
 # Use the Gmail SMTP server
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587  # Use 465 if you're using SSL
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False  # Set to True if you're using SSL
 EMAIL_HOST_USER = 'fakaccoun428@gmail.com'
@@ -143,8 +142,4 @@ EMAIL_HOST_PASSWORD = 'rxwf hipu cxnd tqpi'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-PASSWORD_RESET_TIMEOUT = 259200  # 3 days in seconds
-PASSWORD_RESET_EMAIL_SUBJECT = 'Password Reset'
-PASSWORD_RESET_EMAIL_TEMPLATE_NAME = 'registration/password_reset_email.html'
-PASSWORD_RESET_FROM_EMAIL = 'fakaccoun428'
-
+FRONTEND_URL = '127.0.0.1:8000'

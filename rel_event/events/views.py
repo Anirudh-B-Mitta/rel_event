@@ -14,12 +14,3 @@ class YourEventListView(generics.ListCreateAPIView):
 class YourEventDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-
-def send_email_to_customer(request):
-    subject = "Test"
-    message = "Hi This is test from Django"
-    from_email = settings.EMAIL_HOST_USER
-    recipient_list = ["rohithburle16@gmail.com","chitra17.mahadev@gmail.com"]
-    send_mail(subject, message, from_email, recipient_list)
-    return HttpResponse('Email sent successfully!')
- 
