@@ -5,8 +5,11 @@ class Event(models.Model):
     EID = models.AutoField(primary_key=True)
     event_name = models.CharField(max_length=255)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    date = models.DateField()
+    startDate = models.DateField()
+    endDate = models.DateField()
     location = models.CharField(max_length=255)
+    latitude = models.DecimalField(max_digits=13, decimal_places=10)
+    longitude = models.DecimalField(max_digits=13, decimal_places=10)
     time = models.TimeField()
     require_volunteers = models.BooleanField(default=False)
     poster = models.ImageField(upload_to='event_posters/', null=True, blank=True)
@@ -25,6 +28,7 @@ class Event(models.Model):
     )
     category = models.CharField(max_length=10, choices=category_choices,default="other")
     duration = models.DecimalField(max_digits=2,decimal_places=2,null =True)
+    privacy = models.BooleanField(default=False)
 
     def __str__(self):
         return self.event_name

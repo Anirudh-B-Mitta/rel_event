@@ -86,3 +86,40 @@ class PasswordResetAPIView(APIView):
 class PasswordUpdateAPIView(RetrieveUpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+    
+
+# # views.py
+# from rest_framework import generics, status
+# from rest_framework.response import Response
+# from rest_framework.permissions import IsAuthenticated
+# from django.contrib.auth import get_user_model
+# from rest_framework.views import APIView
+# from rest_framework.exceptions import PermissionDenied
+# from django.contrib.auth import authenticate, login
+# from .serializers import PasswordUpdateSerializer
+
+# class PasswordUpdateView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def put(self, request, *args, **kwargs):
+#         serializer = PasswordUpdateSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+
+#         user = request.user
+#         old_password = serializer.validated_data.get('old_password')
+#         new_password = serializer.validated_data.get('new_password')
+
+#         # Authenticate user with old password
+#         if not user.check_password(old_password):
+#             raise PermissionDenied(detail="Old password is incorrect.", code=status.HTTP_403_FORBIDDEN)
+
+#         # Set and save the new password
+#         user.set_password(new_password)
+#         user.save()
+
+#         # Re-authenticate the user with the new password
+#         authenticated_user = authenticate(request, username=user.email, password=new_password)
+#         if authenticated_user:
+#             login(request, authenticated_user)
+
+#         return Response({'message': 'Password updated successfully.'}, status=status.HTTP_200_OK)

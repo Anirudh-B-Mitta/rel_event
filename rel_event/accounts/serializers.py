@@ -15,3 +15,6 @@ class UserSerializer(serializers.ModelSerializer):
             name=validated_data['name']
         )
         return user
+
+class PasswordUpdateSerializer(serializers.Serializer):
+    new_password = serializers.CharField(required=True)
