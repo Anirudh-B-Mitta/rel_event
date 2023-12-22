@@ -52,12 +52,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
-
-class TokenGenerator(PasswordResetTokenGenerator):
-    def _make_hash_value(self, user, timestamp):
-        return (
-            str(user.pk) + str(timestamp) +
-            str(user.is_active)
-        )
+import hashlib
+class TokenGenerator():
+    def make_hash_value(self, user):
+        hash_object = hashlib.sha256()
+        hash_object.update(user.email.encode())
+        hash_hex = hash_object.hexdigest()
+        return hash_hex
 
 account_activation_token = TokenGenerator()

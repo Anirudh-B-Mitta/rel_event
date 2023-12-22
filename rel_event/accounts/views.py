@@ -72,7 +72,7 @@ class PasswordResetAPIView(APIView):
             return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         # Generate a token and send the reset email
-        token = account_activation_token.make_token(user)
+        token = account_activation_token.make_hash_value(user)
         reset_link = f'{settings.FRONTEND_URL}/api/password-update/{user.id}/{token}/'
 
         subject = 'Password Reset'
@@ -83,10 +83,50 @@ class PasswordResetAPIView(APIView):
         return Response({'message': 'Password reset email sent successfully.'}, status=status.HTTP_200_OK)
 
 
+from .serializers import PasswordUpdateSerializer
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
 class PasswordUpdateAPIView(RetrieveUpdateAPIView):
     queryset = CustomUser.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = PasswordUpdateSerializer
     
+    def get_object(self):
+        user_id = self.kwargs.get('pk')
+        token = self.kwargs.get('token')
+
+        User = get_user_model()
+
+        try:
+            user = User.objects.get(pk=user_id)
+            token_generator = account_activation_token.make_hash_value(user)
+            print(f"given hash: {token} \nGot hash: {token_generator}")
+            if str(token_generator) == token:
+                print("Its equal")
+                return user
+        except User.DoesNotExist:
+            pass
+        
+        return None
+
+
+    def put(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if not instance:
+            return Response({'error': 'User not found or unauthorized'}, status=404)
+        
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        if 'password' in serializer.validated_data:
+            new_password = serializer.validated_data['password']
+            # Set password for the user instance before saving
+            serializer.instance.set_password(new_password)
+            serializer.instance.save()
+        else:
+            serializer.save()
 
 # # views.py
 # from rest_framework import generics, status
