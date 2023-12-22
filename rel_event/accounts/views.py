@@ -86,3 +86,7 @@ class PasswordResetAPIView(APIView):
 class PasswordUpdateAPIView(RetrieveUpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+
+class AccountDetails(RetrieveUpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
