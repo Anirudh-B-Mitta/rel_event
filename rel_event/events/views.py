@@ -1,5 +1,5 @@
 # events/views.py
-from rest_framework import generics
+from rest_framework import generics,status
 from .models import Event
 from .serializers import EventSerializer
 from django.core.mail import send_mail
@@ -13,6 +13,16 @@ class YourEventListView(generics.ListCreateAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
+    def create(self, request, *args, **kwargs):
+        event_data = request.data.copy()  # Copy the request data to modify it
+        event_data['poster'] = request.data.get('poster')  # Add the poster file to the data
+
+        serializer = self.get_serializer(data=event_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 class YourEventDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
