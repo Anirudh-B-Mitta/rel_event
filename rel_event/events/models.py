@@ -27,7 +27,7 @@ class Event(models.Model):
         ("other","Other")
     )
     category = models.CharField(max_length=10, choices=category_choices,default="other")
-    duration = models.DecimalField(max_digits=2,decimal_places=2,null =True)
+    duration = models.DecimalField(max_digits=4,decimal_places=2,null =True)
     privacy = models.BooleanField(default=False)
 
     def __str__(self):
