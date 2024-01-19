@@ -16,5 +16,17 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
-class PasswordUpdateSerializer(serializers.Serializer):
-    new_password = serializers.CharField(required=True)
+from rest_framework import serializers
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class PasswordUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('password',)
+
+    def update(self, instance, validated_data):
+        if 'password' in validated_data:
+            instance.set_password(validated_data['password'])
+        return super().update(instance, validated_data)
