@@ -100,3 +100,20 @@ class UserDataView(APIView):
         }
 
         return Response(user_data)
+    
+    def post(self, request):
+        new_name = request.data.get('name')  # Assuming the new name is sent in the request data
+
+        if new_name:
+            request.user.name = new_name
+            request.user.save()
+
+            response_data = {
+                'id': request.user.id,
+                'email': request.user.email,
+                'name': request.user.name,
+                'message': 'Name updated successfully'
+            }
+            return Response(response_data)
+        else:
+            return Response({'message': 'Please provide a new name'}, status=400)
