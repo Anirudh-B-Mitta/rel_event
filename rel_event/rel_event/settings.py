@@ -190,3 +190,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+RAZORPAY_API_KEY = 'rzp_test_6gVqKVhbGkiCBm'
+RAZORPAY_API_SECRET = 'C5h0RBvbRPA9sfV1Va0nMnMa'
