@@ -21,28 +21,23 @@ class YourTicketView(generics.ListAPIView):
 # views.py
 import razorpay
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Payment
 from .serializers import PaymentSerializer
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
-
-
 
 class PaymentView(APIView):
-    @csrf_exempt
-    @require_POST
     def post(self, request, *args, **kwargs):
         serializer = PaymentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        ticket = serializer.validated_data['ticket']
+        ticket_id = serializer.validated_data['ticket']
         amount = serializer.validated_data['amount']
 
         # Initialize Razorpay client
-        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
 
         # Create Razorpay order
         order_data = {
@@ -50,15 +45,14 @@ class PaymentView(APIView):
             'currency': 'INR',
             'payment_capture': 1  # Auto capture payment
         }
-        order = client.order.create(order_data)
-        print(order)
+        order = client.order.create(data=order_data)
 
         # Store payment details in the database
-        payment = Payment.objects.create(
-            ticket=ticket,
+        Payment.objects.create(
+            ticket=ticket_id,
             PID=order['id'],
             amount=amount,
-            status='Success'
+            status='success'
         )
 
         # Return Razorpay order ID to the front end
