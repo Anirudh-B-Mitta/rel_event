@@ -134,22 +134,20 @@ class UserDataView(APIView):
 #     def put(self, request, *args, **kwargs):
 #         serializer = PasswordUpdateSerializer(data=request.data)
 #         serializer.is_valid(raise_exception=True)
+    
+    def post(self, request):
+        new_name = request.data.get('name')  # Assuming the new name is sent in the request data
 
-#         user = request.user
-#         old_password = serializer.validated_data.get('old_password')
-#         new_password = serializer.validated_data.get('new_password')
+        if new_name:
+            request.user.name = new_name
+            request.user.save()
 
-#         # Authenticate user with old password
-#         if not user.check_password(old_password):
-#             raise PermissionDenied(detail="Old password is incorrect.", code=status.HTTP_403_FORBIDDEN)
-
-#         # Set and save the new password
-#         user.set_password(new_password)
-#         user.save()
-
-#         # Re-authenticate the user with the new password
-#         authenticated_user = authenticate(request, username=user.email, password=new_password)
-#         if authenticated_user:
-#             login(request, authenticated_user)
-
-#         return Response({'message': 'Password updated successfully.'}, status=status.HTTP_200_OK)
+            response_data = {
+                'id': request.user.id,
+                'email': request.user.email,
+                'name': request.user.name,
+                'message': 'Name updated successfully'
+            }
+            return Response(response_data)
+        else:
+            return Response({'message': 'Please provide a new name'}, status=400)
