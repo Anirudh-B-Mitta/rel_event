@@ -9,6 +9,7 @@ class Ticket(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     num_people = models.IntegerField()
     attending = models.IntegerField()
+    order_id = models.CharField(max_length=20)
 
     def __str__(self):
         return f"Ticket {self.TID} for {self.user} at {self.event}"
