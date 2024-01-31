@@ -2,7 +2,12 @@
 from rest_framework import generics
 from .models import Volunteer
 from .serializers import VolunteerSerializer
-from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Volunteer
+from broadcast.models import Broadcast
+from broadcast.serializers import BroadcastSerializer 
 
 
 class YourVolunteerListView(generics.ListCreateAPIView):
@@ -12,9 +17,15 @@ class YourVolunteerListView(generics.ListCreateAPIView):
 class YourVolunteerDetailView(generics.RetrieveDestroyAPIView):
     queryset = Volunteer.objects.all()
     serializer_class = VolunteerSerializer
-    
-    def get_object(self):
-        user_id = self.kwargs.get('user_id')
-        event_id = self.kwargs.get('event_id')
-        volunteer = get_object_or_404(Volunteer, user_id=user_id, event_id=event_id)
-        return volunteer
+
+class SubscribedChannels(APIView):
+    def get(self, request, user_id):
+        # Retrieve all broadcast channels for the given user_id
+        channels = Volunteer.objects.filter(user_id=user_id).values_list('event_id', flat=True)
+        print(channels)
+
+        # Query the Broadcast model to get details of the subscribed channels
+        subscribed_channels = Broadcast.objects.filter(event_id__in=channels)
+        serializer = BroadcastSerializer(subscribed_channels, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

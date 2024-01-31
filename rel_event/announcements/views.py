@@ -10,3 +10,10 @@ class YourAnnouncementDetailView(generics.RetrieveDestroyAPIView):
 class YourAnnouncementListView(generics.ListCreateAPIView):
     queryset = Announcement.objects.all()
     serializer_class = AnnouncementSerializer
+
+class BroadcastMessageListView(generics.ListAPIView):
+    serializer_class = AnnouncementSerializer
+
+    def get_queryset(self):
+        broadcast_id = self.kwargs['broadcast_id']
+        return Announcement.objects.filter(broadcast_id=broadcast_id)

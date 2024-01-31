@@ -16,3 +16,4 @@ rel_event/payments/__pycache__/
 rel_event/payments/migrations/__pycache__/
 venv/
 db.sqlite3
+rel_event/media/
