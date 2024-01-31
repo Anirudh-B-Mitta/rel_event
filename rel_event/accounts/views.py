@@ -127,6 +127,9 @@ class PasswordUpdateAPIView(RetrieveUpdateAPIView):
             serializer.instance.save()
         else:
             serializer.save()
+
+
+
 from rest_framework.permissions import IsAuthenticated
 class UserDataView(APIView):
     permission_classes = [IsAuthenticated]
@@ -135,19 +138,19 @@ class UserDataView(APIView):
 #         serializer = PasswordUpdateSerializer(data=request.data)
 #         serializer.is_valid(raise_exception=True)
     
-    def post(self, request):
-        new_name = request.data.get('name')  # Assuming the new name is sent in the request data
+    def get(self, request):
+        # new_name = request.data.get('name')  # Assuming the new name is sent in the request data
 
-        if new_name:
-            request.user.name = new_name
-            request.user.save()
+        # if new_name:
+        #     request.user.name = new_name
+        #     request.user.save()
 
-            response_data = {
-                'id': request.user.id,
-                'email': request.user.email,
-                'name': request.user.name,
-                'message': 'Name updated successfully'
-            }
-            return Response(response_data)
-        else:
-            return Response({'message': 'Please provide a new name'}, status=400)
+        response_data = {
+            'id': request.user.id,
+            'email': request.user.email,
+            'name': request.user.name,
+            # 'message': 'Name updated successfully'
+        }
+        return Response(response_data)
+        # else:
+        #     return Response({'message': 'Please provide a new name'}, status=400)
