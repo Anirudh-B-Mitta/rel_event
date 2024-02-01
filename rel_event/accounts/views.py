@@ -10,6 +10,8 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import account_activation_token
+from rest_framework.permissions import IsAuthenticated
+from .serializers import PasswordUpdateSerializer
 
 
 class SignUpView(generics.CreateAPIView):
@@ -53,10 +55,6 @@ class LoginView(APIView):
         return Response({'access_token': access_token})
     
 
-# def custom_password_reset_done_view(request):
-#     return render(request, 'registration/password_reset_done.html')
-
-
 class PasswordResetAPIView(APIView):
     def post(self, request, *args, **kwargs):
         email = request.data.get('email', None)
@@ -83,9 +81,6 @@ class PasswordResetAPIView(APIView):
         return Response({'message': 'Password reset email sent successfully.'}, status=status.HTTP_200_OK)
 
 
-from .serializers import PasswordUpdateSerializer
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
-
 class PasswordUpdateAPIView(RetrieveUpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = PasswordUpdateSerializer
@@ -99,17 +94,15 @@ class PasswordUpdateAPIView(RetrieveUpdateAPIView):
         try:
             user = User.objects.get(pk=user_id)
             token_generator = account_activation_token.make_hash_value(user)
-            print(f"given hash: {token} \nGot hash: {token_generator}")
             if str(token_generator) == token:
-                print("Its equal")
                 return user
         except User.DoesNotExist:
-            pass
+            return Response({'message': "user doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
         
         return None
 
 
-    def put(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         instance = self.get_object()
         if not instance:
             return Response({'error': 'User not found or unauthorized'}, status=404)
@@ -129,28 +122,30 @@ class PasswordUpdateAPIView(RetrieveUpdateAPIView):
             serializer.save()
 
 
-
-from rest_framework.permissions import IsAuthenticated
 class UserDataView(APIView):
     permission_classes = [IsAuthenticated]
 
-#     def put(self, request, *args, **kwargs):
-#         serializer = PasswordUpdateSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-    
+    def put(self, request, *args, **kwargs):    
+        new_name = request.data.get('name')  # Assuming the new name is sent in the request data
+
+        if new_name:
+            request.user.name = new_name
+            request.user.save()
+            response_data = {
+            'id': request.user.id,
+            'email': request.user.email,
+            'name': request.user.name,
+            'message': 'Name updated successfully'
+            }
+            return Response(response_data)
+
+        else:
+            return Response({'message': 'Please provide a new name'}, status=400)
+
     def get(self, request):
-        # new_name = request.data.get('name')  # Assuming the new name is sent in the request data
-
-        # if new_name:
-        #     request.user.name = new_name
-        #     request.user.save()
-
         response_data = {
             'id': request.user.id,
             'email': request.user.email,
             'name': request.user.name,
-            # 'message': 'Name updated successfully'
         }
         return Response(response_data)
-        # else:
-        #     return Response({'message': 'Please provide a new name'}, status=400)

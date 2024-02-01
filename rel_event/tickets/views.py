@@ -2,33 +2,37 @@
 from rest_framework import generics
 from .models import Ticket
 from .serializers import TicketSerializer
-
-class YourTicketDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Ticket.objects.all()
-    serializer_class = TicketSerializer
-
-class UserTicketListView(generics.ListAPIView):
-    serializer_class = TicketSerializer
-
-    def get_queryset(self):
-        user_id = self.kwargs['user_id']
-        return Ticket.objects.filter(user_id=user_id)
-
-class EventTicketListView(generics.ListAPIView):
-    serializer_class = TicketSerializer
-
-    def get_queryset(self):
-        event_id = self.kwargs['event_id']
-        return Ticket.objects.filter(event_id=event_id)
-    
 from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import Ticket
 from .serializers import TicketSerializer
 import razorpay
 from django.conf import settings
+from rest_framework.permissions import IsAuthenticated
+
+class YourTicketDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+
+class UserTicketListView(generics.ListAPIView):
+    serializer_class = TicketSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return Ticket.objects.filter(user_id=user_id)
+
+class EventTicketListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = TicketSerializer
+
+    def get_queryset(self):
+        event_id = self.kwargs['event_id']
+        return Ticket.objects.filter(event_id=event_id)
 
 class YourTicketListView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
 

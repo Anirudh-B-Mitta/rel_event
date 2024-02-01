@@ -1,7 +1,7 @@
 # models.py
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
-from django.contrib.auth.tokens import PasswordResetTokenGenerator
+import hashlib
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -22,8 +22,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=255)
-    # phone_number = models.DecimalField(decimal_places=0, max_digits=10)
-    # profile_pic = models.ImageField(upload_to='event_posters/', null=True, blank=True)
+    profile_pic = models.ImageField(upload_to='user_pics/', null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -52,7 +51,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
-import hashlib
 class TokenGenerator():
     def make_hash_value(self, user):
         hash_object = hashlib.sha256()
