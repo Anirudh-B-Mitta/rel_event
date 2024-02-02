@@ -10,6 +10,12 @@ class Ticket(models.Model):
     num_people = models.IntegerField()
     attending = models.IntegerField()
     order_id = models.CharField(max_length=20)
+    STATUS_CHOICES = (
+        ('success', 'Success'),
+        ('fail', 'Fail'),
+        ('cancelled', 'Cancelled'),
+    )
+    ticket_status = models.CharField(max_length=20, default='fail', choices=STATUS_CHOICES)
 
     def __str__(self):
         return f"Ticket {self.TID} for {self.user} at {self.event}"
