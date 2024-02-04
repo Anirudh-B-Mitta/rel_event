@@ -11,11 +11,18 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
+        # Check if 'profile_pic' is provided in the data
+        if 'profile_pic' in validated_data:
+            profile_pic = validated_data.pop('profile_pic')
+        else:
+            # If 'profile_pic' is not provided, set it to None
+            profile_pic = None
+
         user = CustomUser.objects.create_user(
             email=validated_data['email'],
             password=validated_data['password'],
             name=validated_data['name'],
-            profile_pic=validated_data['profile_pic'],
+            profile_pic=profile_pic,
         )
         return user
 
