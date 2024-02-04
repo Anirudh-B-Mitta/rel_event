@@ -28,6 +28,9 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core.mail import EmailMessage
 
 class IsAuthenticatedOrReadOnly(BasePermission):
     """
@@ -46,7 +49,7 @@ class IsAuthenticatedOrReadOnly(BasePermission):
 class YourEventListView(generics.ListCreateAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    # permission_classes = [IsAuthenticatedOrReadOnly]
 
     def create(self, request, *args, **kwargs):
         event_data = request.data.copy()
@@ -56,8 +59,27 @@ class YourEventListView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 
+        self.send_creation_email(serializer.instance)
+
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def send_creation_email(self, event):
+        user = event.user
+
+        subject = 'Event Created Successfully'
+        context = {'event': event, 'name': user.name}
+
+        # Render the HTML content from the template
+        html_message = render_to_string('events/creation_email.html', context)
+        
+        # Create a plain text version of the HTML content for email clients that don't support HTML
+        plain_message = strip_tags(html_message)
+
+        # Send the email
+        email = EmailMessage(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [user.email])
+        email.content_subtype = 'html'  # Set the content type to HTML
+        email.send()
 
 class YourEventDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Event.objects.all()

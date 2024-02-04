@@ -1,0 +1,68 @@
+<!-- accounts/templates/accounts/welcome_email.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Rel-Event</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #3576d8;
+        }
+
+        p {
+            color: #4a4a4a;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3576d8;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .image-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Rel-Event!</h1>
+        <p>Hi {{ name }},</p>
+        <p>Thank you for creating an account on Rel-Event. We're thrilled to have you on board! Get ready to explore and enjoy the best events.</p>
+        <div class="image-container">
+            <img src="https://via.placeholder.com/400x200" alt="Event Image">
+        </div>
+        <p>To get started, click the button below:</p>
+        <a href="#" class="button">Explore Events</a>
+        <p>If you have any questions or need assistance, feel free to contact our support team. We're here to help!</p>
+        <p>Best regards,<br> The <strong>Rel-Event</strong> Team</p>
+    </div>
+</body>
+</html>

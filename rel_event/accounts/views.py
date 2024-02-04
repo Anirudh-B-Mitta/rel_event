@@ -12,6 +12,8 @@ from django.conf import settings
 from .models import account_activation_token
 from rest_framework.permissions import IsAuthenticated
 from .serializers import PasswordUpdateSerializer
+from django.core.mail import EmailMessage
+from django.shortcuts import render
 
 
 class SignUpView(generics.CreateAPIView):
@@ -73,10 +75,24 @@ class PasswordResetAPIView(APIView):
         token = account_activation_token.make_hash_value(user)
         reset_link = f'{settings.FRONTEND_URL}/api/password-update/{user.id}/{token}/'
 
-        subject = 'Password Reset'
-        message = f'Click on the link below to reset your password:\n{reset_link}'
+        # subject = 'Password Reset'
+        # message = f'Click on the link below to reset your password:\n{reset_link}'
 
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+        # send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+        
+        # Render the HTML template
+        context = {'reset_link': reset_link, 'name': user.name}
+        html_message = render(request, 'accounts/forgot_password.html', context).content.decode('utf-8')
+
+        subject = 'Password Reset'
+        
+        # Send the HTML email
+        email = EmailMessage(subject, '', settings.DEFAULT_FROM_EMAIL, [email])
+        email.content_subtype = 'html'  # Set the content type to HTML
+        email.body = html_message
+
+        # Send the email
+        email.send()
 
         return Response({'message': 'Password reset email sent successfully.'}, status=status.HTTP_200_OK)
 

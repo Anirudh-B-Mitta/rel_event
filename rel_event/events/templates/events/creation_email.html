@@ -1,0 +1,19 @@
+<!-- templates/events/creation_email.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Created Successfully</title>
+    <!-- Add your styling here if needed -->
+</head>
+<body>
+    <p>Dear {{ name }},</p>
+    <p>Your event <strong>"{{ event.event_name }}"</strong> has been created successfully. Here are the details:</p>
+    <p>Title: {{ event.event_name }}</p>
+    <p>Date: {{ event.startDate }}</p>
+    <img src="{{ event.poster }}" alt="Event Image" style="max-width: 100%; height: auto;">
+    <p>Thank you for using our platform!</p>
+    <p>Best regards,<br> The <strong>Rel-Event</strong> Team</p>
+</body>
+</html>
