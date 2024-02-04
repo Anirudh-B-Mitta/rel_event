@@ -5,15 +5,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Created Successfully</title>
-    <!-- Add your styling here if needed -->
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #3576d8;
+        }
+
+        p {
+            color: #4a4a4a;
+            line-height: 1.6;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
-    <p>Dear {{ name }},</p>
-    <p>Your event <strong>"{{ event.event_name }}"</strong> has been created successfully. Here are the details:</p>
-    <p>Title: {{ event.event_name }}</p>
-    <p>Date: {{ event.startDate }}</p>
-    <img src="{{ event.poster }}" alt="Event Image" style="max-width: 100%; height: auto;">
-    <p>Thank you for using our platform!</p>
-    <p>Best regards,<br> The <strong>Rel-Event</strong> Team</p>
+    <div class="container">
+        <h1>Event Created Successfully</h1>
+        <p>Dear {{ name }},</p>
+        <p>Your event <strong>"{{ event.event_name }}"</strong> has been created successfully. Here are the details:</p>
+        <p>Title: {{ event.event_name }}</p>
+        <p>Date: {{ event.startDate }}</p>
+        
+        <!-- User-uploaded Image -->
+        <img src="{{ event.poster }}" alt="Event Image">
+
+        <p>Thank you for using our platform!</p>
+        <p class="footer">Best regards,<br> The <strong>Rel-Event</strong> Team</p>
+    </div>
 </body>
 </html>

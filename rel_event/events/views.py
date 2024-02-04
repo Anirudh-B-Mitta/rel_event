@@ -28,7 +28,7 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
-from django.template.loader import render_to_string
+from django.shortcuts import render
 from django.utils.html import strip_tags
 from django.core.mail import EmailMessage
 
@@ -66,12 +66,13 @@ class YourEventListView(generics.ListCreateAPIView):
     
     def send_creation_email(self, event):
         user = event.user
-
+        print(user.name)
+        print(event.poster)
         subject = 'Event Created Successfully'
         context = {'event': event, 'name': user.name}
 
         # Render the HTML content from the template
-        html_message = render_to_string('events/creation_email.html', context)
+        html_message = render(self.request, 'events/creation_email.html', context).content.decode('utf-8')
         
         # Create a plain text version of the HTML content for email clients that don't support HTML
         plain_message = strip_tags(html_message)
@@ -79,6 +80,7 @@ class YourEventListView(generics.ListCreateAPIView):
         # Send the email
         email = EmailMessage(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [user.email])
         email.content_subtype = 'html'  # Set the content type to HTML
+        email.body = html_message
         email.send()
 
 class YourEventDetailView(generics.RetrieveUpdateDestroyAPIView):
