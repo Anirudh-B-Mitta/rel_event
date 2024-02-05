@@ -163,7 +163,7 @@ EMAIL_HOST_PASSWORD = 'vlqo yshw qruv mthl'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-FRONTEND_URL = '127.0.0.1:8000'
+FRONTEND_URL = '127.0.0.1:5173'
 
 
 # CORS_ALLOWED_ORIGINS = [
