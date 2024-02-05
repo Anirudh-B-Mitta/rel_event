@@ -16,7 +16,7 @@ from django.utils.html import strip_tags
 from django.core.mail import EmailMessage
 
 class YourPaymentListView(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
 
@@ -46,6 +46,7 @@ class YourPaymentListView(generics.ListCreateAPIView):
         response = requests.get(full_api_url)
         print(response)
         if response.status_code == 200:
+            serializer.save()
             print("Get Successful")
             data = response.json()
             print(self.request.data)
@@ -98,33 +99,36 @@ class YourTicketView(generics.ListAPIView):
         return Payment.objects.filter(ticket=ticket_id)
     
 
-# class PaymentView(APIView):
-#     permission_classes = [IsAuthenticated]
-#     def post(self, request, *args, **kwargs):
-#         serializer = PaymentSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
+# views.py
 
-#         ticket_id = serializer.validated_data['ticket']
-#         amount = serializer.validated_data['amount']
+from django.http import JsonResponse
+import razorpay
 
-#         # Initialize Razorpay client
-#         client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
+def initiate_refund(request, order_id):
+    print("this is called")
+    client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
+    ticket = Ticket.objects.get(order_id=order_id)
+    payment = Payment.objects.get(ticket_id = ticket.TID)
+    print(payment,"payment")
+    print(payment.amount,"payment amount")
 
-#         # Create Razorpay order
-#         order_data = {
-#             'amount': int(amount * 100),  # Amount in paise
-#             'currency': 'INR',
-#             'payment_capture': 1  # Auto capture payment
-#         }
-#         order = client.order.create(data=order_data)
+    try:
+        refund_data = {
+            'payment_id': payment.PID
+        }
 
-#         # Store payment details in the database
-#         Payment.objects.create(
-#             ticket=ticket_id,
-#             PID=order['id'],
-#             amount=amount,
-#             status='success'
-#         )
+        refund = client.payment.refund(**refund_data)
 
-#         # Return Razorpay order ID to the front end
-#         return Response({'order_id': order['id']}, status=status.HTTP_201_CREATED)
+        if refund.get('status') == 'processed':
+            payment.status = 'refunded'
+            payment.save()
+            print(ticket.ticket_status)
+            ticket.ticket_status = 'cancelled'
+            ticket.save()
+            return JsonResponse({'status': 'success', 'message': 'Refund processed successfully'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Refund processing failed'})
+
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+
