@@ -1,6 +1,7 @@
 # payments/views.py
 from rest_framework import generics
 from .models import Payment
+from tickets.models import Ticket
 from .serializers import PaymentSerializer
 from rest_framework.permissions import IsAuthenticated
 import razorpay
@@ -10,6 +11,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 import requests
 from django.urls import reverse
+from django.shortcuts import render
+from django.utils.html import strip_tags
+from django.core.mail import EmailMessage
 
 class YourPaymentListView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -50,11 +54,35 @@ class YourPaymentListView(generics.ListCreateAPIView):
             if response.status_code == 200:
                 # The API call was successful, the resource was deleted
                 print({'result': 'Ticket edited successfully'})
+                print(serializer, "serializer \n", serializer.data, "serializer.data")
+                self.send_creation_email(dict(serializer.data))
+
             else:
                 # Handle errors
                 print({'error': f'API call failed with status code {response.status_code}'}, status=500)
         else:
             print({'error': f'API call failed with status code {response.status_code}'}, status=500)
+
+    def send_creation_email(self, payment_data):
+        ticket_id = payment_data['ticket']
+        ticket = Ticket.objects.get(pk=ticket_id)
+        print(ticket.user.name)
+        print(ticket.event.event_name)
+        subject = f'Ticket for {ticket.event.event_name}'
+        context = {'event': ticket.event, 'user': ticket.user, 'ticket': ticket, 'payment': payment_data}
+
+        # Render the HTML content from the template
+        html_message = render(self.request, 'payments/ticket_confirm.html', context).content.decode('utf-8')
+        
+        # Create a plain text version of the HTML content for email clients that don't support HTML
+        plain_message = strip_tags(html_message)
+
+        # Send the email
+        email = EmailMessage(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [ticket.user.email])
+        email.content_subtype = 'html'  # Set the content type to HTML
+        email.body = html_message
+        email.send()
+
 
 class YourPaymentDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
