@@ -14,9 +14,8 @@ services:
       - MYSQL_PASSWORD=admin
     restart: always
 
-  django_app:
-    build:
-      context: .
+  backend:
+    image: backend-django:latest
     ports:
       - "8002:8002"
     volumes:
