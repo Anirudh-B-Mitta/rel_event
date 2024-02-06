@@ -74,6 +74,7 @@ class PasswordResetAPIView(APIView):
         # Generate a token and send the reset email
         token = account_activation_token.make_hash_value(user)
         reset_link = f'{settings.FRONTEND_URL}/pwdUpdate/{user.id}/{token}/'
+        print(reset_link)
 
         # subject = 'Password Reset'
         # message = f'Click on the link below to reset your password:\n{reset_link}'
