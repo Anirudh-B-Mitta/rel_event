@@ -24,6 +24,8 @@ class Event(models.Model):
         ("film","Film"),
         ("literature","Literature"),
         ("technology","Technology"),
+        ("fashion", "Fashion"),
+        ("lifestyle", "Lifestyle"),
         ("other","Other")
     )
     category = models.CharField(max_length=10, choices=category_choices,default="other")
