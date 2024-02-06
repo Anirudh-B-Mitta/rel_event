@@ -98,6 +98,7 @@ WSGI_APPLICATION = "rel_event.wsgi.application"
 #     }
 # }
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -174,7 +175,7 @@ EMAIL_HOST_PASSWORD = 'vlqo yshw qruv mthl'
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-FRONTEND_URL = 'http://15.206.82.200:8000'
+FRONTEND_URL = 'http://15.206.82.200:3000'
 
 
 # CORS_ALLOWED_ORIGINS = [
