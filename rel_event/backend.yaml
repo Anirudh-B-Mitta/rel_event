@@ -1,6 +1,25 @@
 version: '3.8'
 
 services:
+  backend:
+    image: backend-django:latest
+    ports:
+      - "8002:8002"
+    depends_on:
+      - mysql
+    networks:
+      - mynetwork
+    environment:
+      - DB_ENGINE=django.db.backends.mysql
+      - DB_NAME=django_testing
+      - DB_USER=admin
+      - DB_PASSWORD=admin
+      - DB_HOST=mysql
+      - DB_PORT=3306
+    volumes:
+      - ./media:/app/media
+    restart: always
+
   mysql:
     image: mysql:latest
     networks:
@@ -13,20 +32,6 @@ services:
       - MYSQL_USER=admin
       - MYSQL_PASSWORD=admin
     restart: always
-
-  django_app:
-    build:
-      context: .
-    ports:
-      - "8002:8002"
-    volumes:
-      - ./media:/app/media
-    environment:
-      SQLALCHEMY_DATABASE_URI: 'mysql://admin:admin@mysql/django_testing'
-    networks:
-      - mynetwork
-    depends_on:
-      - mysql
 
 networks:
   mynetwork:
