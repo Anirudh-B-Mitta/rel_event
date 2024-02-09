@@ -104,6 +104,27 @@ class YourTicketView(generics.ListAPIView):
 from django.http import JsonResponse
 import razorpay
 
+def send_cancellation_email(request, payment_data):
+    print("Cancellation email called")
+    ticket = payment_data.ticket
+    # ticket = Ticket.objects.get(pk=ticket_id)
+    print(ticket.user.name)
+    print(ticket.event.event_name)
+    subject = f'Ticket cancelled for {ticket.event.event_name}'
+    context = {'event': ticket.event, 'user': ticket.user, 'ticket': ticket, 'payment': payment_data}
+
+    # Render the HTML content from the template
+    html_message = render(request, 'payments/ticket_cancel.html', context).content.decode('utf-8')
+    
+    # Create a plain text version of the HTML content for email clients that don't support HTML
+    plain_message = strip_tags(html_message)
+
+    # Send the email
+    email = EmailMessage(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [ticket.user.email])
+    email.content_subtype = 'html'  # Set the content type to HTML
+    email.body = html_message
+    email.send()
+
 def initiate_refund(request, order_id):
     print("this is called")
     client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
@@ -125,6 +146,7 @@ def initiate_refund(request, order_id):
             print(ticket.ticket_status)
             ticket.ticket_status = 'cancelled'
             ticket.save()
+            send_cancellation_email(request, payment)
             return JsonResponse({'status': 'success', 'message': 'Refund processed successfully'})
         else:
             return JsonResponse({'status': 'error', 'message': 'Refund processing failed'})
