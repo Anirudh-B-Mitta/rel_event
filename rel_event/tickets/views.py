@@ -107,6 +107,8 @@ class YourTicketListView(generics.ListCreateAPIView):
 
             # If the ticket is paid, create a new order
             amount = self.request.data.get('amount')
+            if amount == 0:
+                amount = 1
             order_id = create_razorpay_order(amount)
         else:
             # If the ticket doesn't exist, create a new order
