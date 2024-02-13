@@ -13,6 +13,7 @@ from .models import account_activation_token
 from rest_framework.permissions import IsAuthenticated
 from .serializers import PasswordUpdateSerializer
 from django.core.mail import EmailMessage
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import render
 
 
@@ -149,22 +150,30 @@ class PasswordUpdateAPIView(RetrieveUpdateAPIView):
 class UserDataView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def put(self, request, *args, **kwargs):    
-        new_name = request.data.get('name')  # Assuming the new name is sent in the request data
+    parser_classes = (MultiPartParser, FormParser,)  # Allow file uploads
+
+    def put(self, request, *args, **kwargs):
+        new_name = request.data.get('name')
+        new_image = request.data.get('profile_pic')
 
         if new_name:
             request.user.name = new_name
-            request.user.save()
-            response_data = {
+
+        if new_image:
+            request.user.profile_pic = new_image
+
+        request.user.save()
+
+        print(request.data  )
+
+        response_data = {
             'id': request.user.id,
             'email': request.user.email,
             'name': request.user.name,
-            'message': 'Name updated successfully'
-            }
-            return Response(response_data)
-
-        else:
-            return Response({'message': 'Please provide a new name'}, status=400)
+            'image_url': request.user.profile_pic.url if request.user.profile_pic else None,
+            'message': 'Profile updated successfully'
+        }
+        return Response(response_data)
 
     def get(self, request):
         response_data = {
