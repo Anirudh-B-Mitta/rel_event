@@ -176,9 +176,4 @@ class UserDataView(APIView):
         return Response(response_data)
 
     def get(self, request):
-        response_data = {
-            'id': request.user.id,
-            'email': request.user.email,
-            'name': request.user.name,
-        }
-        return Response(response_data)
+        return Response(UserSerializer(instance = request.user, context={'request': request}).data, status=status.HTTP_200_OK)
