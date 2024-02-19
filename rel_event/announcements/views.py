@@ -1,7 +1,7 @@
 # announcements/views.py
 from rest_framework import generics
 from .models import Announcement
-from .serializers import AnnouncementSerializer
+from .serializers import AnnouncementSerializer, BroadcastDataSerializer
 from rest_framework.permissions import IsAuthenticated
 
 class YourAnnouncementDetailView(generics.RetrieveDestroyAPIView):
@@ -19,7 +19,7 @@ class YourAnnouncementListView(generics.ListCreateAPIView):
 class BroadcastMessageListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
-    serializer_class = AnnouncementSerializer
+    serializer_class = BroadcastDataSerializer
 
     def get_queryset(self):
         broadcast_id = self.kwargs['broadcast_id']
