@@ -98,29 +98,17 @@ WSGI_APPLICATION = "rel_event.wsgi.application"
 #     }
 # }
 
-
+import os
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_testing',  # Should match the MYSQL_DATABASE in docker-compose.yml
-        'USER': 'admin',           # Should match the MYSQL_USER in docker-compose.yml
-        'PASSWORD': 'admin',       # Should match the MYSQL_PASSWORD in docker-compose.yml
-        'HOST': 'mysql',           # Should match the service name in docker-compose.yml
-        'PORT': '3306',
+    "default": {
+        "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
+        "NAME": os.environ.get("DB_NAME", "django_testing"),
+        "USER": os.environ.get("DB_USER", "admin"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "admin"),
+        "HOST": os.environ.get("DB_HOST", "mysql"),
+        "PORT": os.environ.get("DB_PORT", "3306"),
     }
 }
-
-# import os
-# DATABASES = {
-#     "default": {
-#         "ENGINE": os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
-#         "NAME": os.environ.get("DB_NAME", "django_testing"),
-#         "USER": os.environ.get("DB_USER", "admin"),
-#         "PASSWORD": os.environ.get("DB_PASSWORD", "admin"),
-#         "HOST": os.environ.get("DB_HOST", "mysql"),
-#         "PORT": os.environ.get("DB_PORT", "3306"),
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -164,27 +152,6 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# Use the Gmail SMTP server
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False  # Set to True if you're using SSL
-EMAIL_HOST_USER = 'relevent820@gmail.com'
-EMAIL_HOST_PASSWORD = 'vlqo yshw qruv mthl'
-
-AUTH_USER_MODEL = 'accounts.CustomUser'
-
-FRONTEND_URL = 'http://13.126.86.46:3000'
-
-
-# CORS_ALLOWED_ORIGINS = [
-#     # Add your frontend domain(s) here, e.g., 'http://localhost:3000'
-# ]
-CORS_ALLOW_ALL_ORIGINS = True  #for development purpose only
-
-CORS_ALLOW_CREDENTIALS = True
-
 # settings.py
 from datetime import timedelta
 
@@ -215,5 +182,31 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-RAZORPAY_API_KEY = 'rzp_test_6gVqKVhbGkiCBm'
-RAZORPAY_API_SECRET = 'C5h0RBvbRPA9sfV1Va0nMnMa'
+from dotenv import load_dotenv
+
+load_dotenv()
+
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://127.0.0.1:3000')
+
+RAZORPAY_API_KEY = os.getenv('RAZORPAY_API_KEY')
+RAZORPAY_API_SECRET = os.getenv('RAZORPAY_API_SECRET')
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False  # Set to True if you're using SSL
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+AUTH_USER_MODEL = 'accounts.CustomUser'
+
+
+
+CORS_ALLOWED_ORIGINS = [
+    FRONTEND_URL
+]
+# CORS_ALLOW_ALL_ORIGINS = True 
+
+CORS_ALLOW_CREDENTIALS = True
