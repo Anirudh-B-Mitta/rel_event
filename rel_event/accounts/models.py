@@ -51,6 +51,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+
+#For password reset
 class TokenGenerator():
     def make_hash_value(self, user):
         hash_object = hashlib.sha256()

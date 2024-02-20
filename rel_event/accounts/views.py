@@ -61,33 +61,21 @@ class LoginView(APIView):
 class PasswordResetAPIView(APIView):
     def post(self, request, *args, **kwargs):
         email = request.data.get('email', None)
-        print(email, "HI")
 
         if not email:
-            print("HI 1")
             return Response({'error': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         User = get_user_model()
 
         try:
             user = User.objects.get(email=email)
-            print("HI 2")
         except User.DoesNotExist:
-            print("HI 3")
             return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 
         # Generate a token and send the reset email
         token = account_activation_token.make_hash_value(user)
-        print("HI 4")
         reset_link = f'{settings.FRONTEND_URL}/pwdUpdate/{user.id}/{token}/'
-        print(reset_link, "HI 5")
 
-        # subject = 'Password Reset'
-        # message = f'Click on the link below to reset your password:\n{reset_link}'
-
-        # send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
-        
-        # Render the HTML template
         context = {'reset_link': reset_link, 'name': user.name}
         html_message = render(request, 'accounts/forgot_password.html', context).content.decode('utf-8')
 
@@ -100,8 +88,6 @@ class PasswordResetAPIView(APIView):
 
         # Send the email
         email.send()
-
-        print("Final HI")
 
         return Response({'message': 'Password reset email sent successfully.'}, status=status.HTTP_200_OK)
 
