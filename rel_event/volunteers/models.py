@@ -4,6 +4,7 @@ from accounts.models import CustomUser
 from events.models import Event
 
 class Volunteer(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
 
