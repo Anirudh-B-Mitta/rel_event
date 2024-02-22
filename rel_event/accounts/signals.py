@@ -28,7 +28,7 @@ def send_welcome_email(sender, instance, created, **kwargs):
     if created:
         subject = 'Welcome to Rel-Event'
         template_name = 'accounts/welcome_email.html'
-        context = {'name': instance.name}
+        context = {'name': instance.name, 'welcome_link': settings.FRONTEND_URL}
         
         html_message = render_to_string(template_name, context)
 
