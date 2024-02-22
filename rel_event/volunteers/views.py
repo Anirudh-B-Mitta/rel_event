@@ -8,6 +8,7 @@ from rest_framework import status
 from .models import Volunteer
 from broadcast.models import Broadcast
 from rest_framework.permissions import IsAuthenticated
+from events.models import Event
 
 
 class YourVolunteerListView(generics.ListCreateAPIView):
@@ -29,3 +30,31 @@ class SubscribedChannels(APIView):
         serializer = CombinedDataSerializer(subscribed_channels, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class VolunteerAPIView(APIView):
+    def get(self, request, event_id):
+        # Authenticate user based on the provided token
+        user = request.user
+
+        if not user.is_authenticated:
+            return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Retrieve the event based on the provided event ID
+        try:
+            event = Event.objects.get(EID=event_id)
+        except Event.DoesNotExist:
+            return Response({"detail": "Event not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if a volunteer entry already exists for the user and event
+        try:
+            volunteer = Volunteer.objects.get(user=user, event=event)
+            print(volunteer, "volunteer")
+            print(volunteer.id, "volunteer id")
+            vid = volunteer.id
+            return Response({"vid": vid}, status=status.HTTP_200_OK)
+        except Volunteer.DoesNotExist:
+            # If no volunteer entry exists, create a new one
+            volunteer = Volunteer.objects.create(user=user, event=event)
+            vid = volunteer.id
+            return Response({"vid": vid}, status=status.HTTP_201_CREATED)
