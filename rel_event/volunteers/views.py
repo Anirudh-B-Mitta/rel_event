@@ -58,3 +58,8 @@ class VolunteerAPIView(APIView):
             volunteer = Volunteer.objects.create(user=user, event=event)
             vid = volunteer.id
             return Response({"vid": vid}, status=status.HTTP_201_CREATED)
+
+class VolunteerCount(APIView):
+    def get(self, request, event_id):
+        v_count = Volunteer.objects.filter(event_id=event_id).count()
+        return Response(v_count, status=status.HTTP_200_OK)
