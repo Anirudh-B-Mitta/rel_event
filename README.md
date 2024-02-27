@@ -4,12 +4,13 @@
 
 Struggling with event management complexities? Existing systems often leave users frustrated with convoluted interfaces and cumbersome processes. Our Event Management System __REL-EVENT__ revolutionizes event organization, attendee registration, and volunteer coordination, offering an intuitive platform that simplifies the entire process. With streamlined event creation, seamless attendee registration, and efficient volunteer management, Rel-Event bridges the gap between organizers, attendees, and volunteers, ensuring a smooth and hassle-free experience for all. It even let's all the users to perform all the roles. Join us in redefining event management
 
-(The following code is only the backend. For frontend use [RelEvent Frontend](https://github.com/siddarthal/AlphaProject.git "AlphaProject"))
+(The following code is only for the backend. For frontend use [RelEvent Frontend](https://github.com/siddarthal/AlphaProject.git "AlphaProject"))
 
 ## Running the App
-<p>Usage of this application can be done in three ways. The first would be running it in the localhost of your system where you and only you can access the application.</p>
-<p>The second way is to host it on any cloud service like AWS with the help of containerzation tool such as Docker</p>
-<p>The next type is to use Jenkins for CI/CD</p>
+<p>Usage of this application can be done in three ways.</p>
+<p> The first would be running it in the localhost of your system where you and only you can access the application.</p>
+<p>The second way is to host it on any cloud service like AWS with the help of containerzation tool such as Docker.</p>
+<p>The next type is to use Jenkins for CI/CD.</p>
 
 ## Localhost
 <p>To run the application in the localhost it is required to have Python 3.9 or above in the system</p>
@@ -60,6 +61,8 @@ Go to browser and type __127.0.0.1:8000__ to see your application.
 
 __Hurray!! It's running__
 
+#### NOTE: This is only the backend and can be used through Postman. For UI refer [RelEvent Frontend](https://github.com/siddarthal/AlphaProject.git)
+
 ## Docker Container
 The second type of running the application is through Docker. The below steps are given assuming `Docker` and `docker-compose` are installed.
 
@@ -94,6 +97,8 @@ Go to browser and type __\<your IP>:8002__ to see your application
 
 __TaDa!! It's working__
 
+#### NOTE: This is only the backend and can be used through Postman. For UI refer [RelEvent Frontend](https://github.com/siddarthal/AlphaProject.git)
+
 ## Jenkins
 The next type for hosting the application is through Jenkins. Here you can connect it to your git and trigger the build for every change you make.
 
@@ -105,5 +110,18 @@ Clone the github repository and add it to your github
 ### Step 2
 Create a Free-style project in Jenkins and configure it with following details:
 - Give your description
-- Select Github Project and give your url
-- In source code management select git 
+- Select Github Project and give your project url
+- In source code management select git, give your repository url followed by credentials related to it. Specify the branch to be built.
+- Go to build triggers and check `Github Hook triggers`
+- In the Build steps select `Execute shell` and type the following:
+```sh
+cd rel_event
+docker-compose -f backend.yaml down
+docker rmi backend-django:latest || true
+docker build -t backend-django:latest .
+docker-compose -f backend.yaml up -d
+```
+- Apply and Save the configuration
+- Build manually for the first time, from next time whenever a git push is done it gets triggered automatically.
+
+__Use the application by typing `<your IP>:8002` in the browser or Postman__
